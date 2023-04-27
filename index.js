@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const tqdm = require(`tqdm`);
 
-const {hasWixDropdownMenu, hasPlatform, hasPGOnFold} = require("./utils");
+const { hasPGOnFold } = require("./utils");
 
 const urls = [
   "https://www.wix.com/demone2/five-28",
