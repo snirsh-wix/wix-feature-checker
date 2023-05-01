@@ -67,12 +67,13 @@ const urls = [
     );
 
     // !!REPLACE WITH YOUR OWN FEATURE CHECKER FUNCTION!!
-    const ddMenu = await page.evaluate(hasPGOnFold)
-    if (ddMenu) {
+    const containsFeature = await page.evaluate(hasPGOnFold)
+    if (containsFeature) {
         usingFeature.push(url)
     }
   }
   await browser.close();
+  console.log("Using feature:")
   for (const url of urls) {
     console.log(usingFeature.includes(url) ? 'V' : ' ')
   }
