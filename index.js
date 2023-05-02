@@ -49,6 +49,15 @@ const urls = [
   "https://www.wix.com/demone2/fro-moi"
 ];
 
+const displayProgressBar = (completed, total) => {
+    const percentage = Math.round((completed / total) * 100);
+    const progressBar = Array(percentage).fill('█').join('');
+    const emptyBar = Array(100 - percentage).fill('░').join('');
+    process.stdout.write(`\r[${progressBar}${emptyBar}] ${percentage}%`);
+    if (completed === total)
+      process.stdout.write('\n')
+}
+
 (async () => {
   const browser = await puppeteer.launch();
   const maxConcurrency = 20; // Adjust this value based on your system's capabilities
@@ -75,10 +84,19 @@ const urls = [
 
   const processUrlsInChunks = async (urls) => {
     const results = [];
+    let completed = 0
+    const total = urls.length
     while (urls.length > 0) {
       const chunk = urls.splice(0, maxConcurrency);
       const promises = chunk.map((url) => processUrl(url));
-      const chunkResults = await Promise.all(promises);
+      const wrappedPromises = promises.map((promise) => promise.then((value) => {
+          completed++
+          displayProgressBar(completed, total)
+          return value
+        })
+      )
+
+      const chunkResults = await Promise.all(wrappedPromises);
       results.push(...chunkResults);
     }
     return results;
