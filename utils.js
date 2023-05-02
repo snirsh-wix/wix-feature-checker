@@ -104,11 +104,14 @@ const hasPGOnFold = () => {
 
 const hasRepeater = () => Boolean(document.querySelectorAll(`[class*="wixui-repeater"]`).length > 0)
 
+const hasAnimationsFeature = () => Boolean(window.debugApi.getAllLoadedFeatures().includes('animations'))
+
 module.exports = {
     hasWixDropdownMenu,
     hasWixVideo,
     hasPlatform,
     hasScreenIn,
     hasPGOnFold,
-    hasRepeater
+    hasRepeater,
+    hasAnimationsFeature
 }
