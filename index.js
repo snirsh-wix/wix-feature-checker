@@ -86,6 +86,7 @@ const displayProgressBar = (completed, total) => {
     const results = [];
     let completed = 0
     const total = urls.length
+    console.log(`Processing ${total} urls...`)
     while (urls.length > 0) {
       const chunk = urls.splice(0, maxConcurrency);
       const promises = chunk.map((url) => processUrl(url));
