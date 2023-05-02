@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const tqdm = require(`tqdm`);
 
 const { hasRepeater } = require("./utils");
 
@@ -47,13 +46,15 @@ const urls = [
   "https://www.wix.com/demone2/walker-construction",
   "https://www.wix.com/demone2/peca",
   "https://www.wix.com/demone2/mollard",
+  "https://www.wix.com/demone2/fro-moi"
 ];
+
 (async () => {
   const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  const usingFeature = []
+  const maxConcurrency = 20; // Adjust this value based on your system's capabilities
 
-  for (const url of tqdm(urls)) {
+  const processUrl = async (url) => {
+    const page = await browser.newPage();
     await page.goto(`${url}?debug`);
     await page.waitForFunction(() => typeof window.debugApi !== 'undefined');
     const successSelector = '#renderIndicator > span > span > span:nth-child(1)';
@@ -67,15 +68,27 @@ const urls = [
     );
 
     // !!REPLACE WITH YOUR OWN FEATURE CHECKER FUNCTION!!
-    const containsFeature = await page.evaluate(hasRepeater)
-    if (containsFeature) {
-        usingFeature.push(url)
+    const containsFeature = await page.evaluate(hasRepeater);
+    await page.close();
+    return { url, containsFeature };
+  };
+
+  const processUrlsInChunks = async (urls) => {
+    const results = [];
+    while (urls.length > 0) {
+      const chunk = urls.splice(0, maxConcurrency);
+      const promises = chunk.map((url) => processUrl(url));
+      const chunkResults = await Promise.all(promises);
+      results.push(...chunkResults);
     }
-  }
+    return results;
+  };
+
+  const featureResults = await processUrlsInChunks(urls);
   await browser.close();
-  console.log("Using feature:")
-  for (const url of urls) {
-    console.log(usingFeature.includes(url) ? 'V' : ' ')
+
+  console.log("Using feature:");
+  for (const result of featureResults) {
+    console.log(result.containsFeature ? 'V' : '\t');
   }
 })();
-
