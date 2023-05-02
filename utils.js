@@ -102,10 +102,13 @@ const hasPGOnFold = () => {
     return proGalleryComps.length > 0
 }
 
+const hasRepeater = () => Boolean(document.getElementsByClassName(/wixui-repeater/).length > 0)
+
 module.exports = {
     hasWixDropdownMenu,
     hasWixVideo,
     hasPlatform,
     hasScreenIn,
-    hasPGOnFold
+    hasPGOnFold,
+    hasRepeater
 }

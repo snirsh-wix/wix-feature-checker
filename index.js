@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const tqdm = require(`tqdm`);
 
-const { hasPGOnFold } = require("./utils");
+const { hasRepeater } = require("./utils");
 
 const urls = [
   "https://www.wix.com/demone2/five-28",
@@ -67,7 +67,7 @@ const urls = [
     );
 
     // !!REPLACE WITH YOUR OWN FEATURE CHECKER FUNCTION!!
-    const containsFeature = await page.evaluate(hasPGOnFold)
+    const containsFeature = await page.evaluate(hasRepeater)
     if (containsFeature) {
         usingFeature.push(url)
     }
